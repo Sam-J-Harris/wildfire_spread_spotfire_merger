@@ -22,5 +22,5 @@ tvec=linspace(tmin,tmax,steps+1); % time vector.
 
 %% MAIN CODE AND PLOTTING
 [Z1, RE1, mRE1] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,U); % main ODE solver
-ROSSplot_v1_1({Z1},spc,1) % plotting function
+ROSSplot_v1_1({Z1},spc,1) % plotting function, make sure Z1 is in curly brackets. Multiple experiments can be outputted in the same figure as subfigures, e.g. write {Z1,Z2}
 totaltime=round(toc,2); fprintf("Fire Complete. Total time = "+num2str(totaltime)+" seconds.\n"); % stop timer, output message for the user.

@@ -1,4 +1,12 @@
 function ROSSplot_v1_1(bigZ,spc,fignum)
+% Plots the wildfire evolution
+%
+% Inputs:
+%   bigZ = {Z1,Z2,...Zn}: list of n experiments of the wildfire boundary data.
+%   spc = determines how many isochrones are plotted - set spc = 1 to plot all.
+%   fignum = which figure the plots are presented in.
+%
+% Code:
 scrsiz = get(0,'ScreenSize'); set(gcf, 'Position',  [scrsiz(3)/4, scrsiz(4)/8, scrsiz(3)/2.5, scrsiz(3)/4]) % outputs the plots in specific position, dependent on user's screensize
 
 Zno = size(bigZ,2); % number of experiments to be plotted, these appear in one long row
