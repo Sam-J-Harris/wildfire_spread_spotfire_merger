@@ -2,10 +2,10 @@
 % Figure 4 - evolution of various Laurent and non-Laurent shapes
 %
 % Author's runtimes: 
-%   irregular pentagon:
-%   hourglass:
-%   bean:
-%   blade:
+%   irregular pentagon: N=32: 8 seconds. N=128: 90.65 seconds = 1.51 mins.
+%   hourglass: N=32: 15.89 second. N=128: 498.98 seconds = 8.32 mins.
+%   bean: N=32: 94 seconds. N=128: 373.29 seconds = 6.22 mins.
+%   blade: N=32: 102 seconds. N=128: 1531.58 seconds = 25.53 mins.
 %
 % Code:
 clear; clc; close all; set(0,'defaultTextInterpreter','latex'); warning('off'); % clear workspace
@@ -42,8 +42,8 @@ tmax4=0.2; tvec4=linspace(tmin,tmax4,steps+1); % maximum time; time vector.
 
 %% MAIN CODE AND PLOTTING
 % Main ODE solver and plotting - uncomment desired example.
-%[Z1, RE1, mRE1] = ROSSmain_v1_1(N,shswt1,shinp1,tvec1,v0,delta1,alpha,beta1,lambda1,U1); ROSSplot_v1_1({Z1},spc,1); % irregular pentagon.
+[Z1, RE1, mRE1] = ROSSmain_v1_1(N,shswt1,shinp1,tvec1,v0,delta1,alpha,beta1,lambda1,U1); ROSSplot_v1_1({Z1},spc,1); % irregular pentagon.
 %[Z2, RE2, mRE2] = ROSSmain_v1_1(N,shswt2,shinp2,tvec2,v0,delta2,alpha,beta2,lambda2,U2); ROSSplot_v1_1({Z2},spc,2); % hourglass.
 %[Z3, RE3, mRE3] = ROSSmain_v1_1(N,shswt3,shinp3,tvec3,v0,delta3,alpha,beta3,lambda3,U3); ROSSplot_v1_1({Z3},spc,3); % bean.
-[Z4, RE4, mRE4] = ROSSmain_v1_1(N,shswt4,shinp4,tvec4,v0,delta4,alpha,beta4,lambda4,U4); ROSSplot_v1_1({Z4},spc,4); % blade.
+%[Z4, RE4, mRE4] = ROSSmain_v1_1(N,shswt4,shinp4,tvec4,v0,delta4,alpha,beta4,lambda4,U4); ROSSplot_v1_1({Z4},spc,4); % blade.
 totaltime=round(toc,2); fprintf("Fire Complete. Total time = "+num2str(totaltime)+" seconds.\n"); % stop timer, output message for the user.
