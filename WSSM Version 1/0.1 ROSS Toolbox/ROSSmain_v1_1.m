@@ -1,9 +1,9 @@
 function [Z, RE, mRE] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,U)
 % ROSS Main Code
-%   Z = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,tau,U,s)
+%   Z = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,U)
 %   produces the cell array Z of size 1x(steps+1) of the free boundary evolution. 
 %
-%   [Z, RE, mRE] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,tau,U,s)
+%   [Z, RE, mRE] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lambda,U)
 %   produces the cell arrays Z, the vector RE for the relative error of the
 %   rate of change of area law at each time step and the scalar mRE: the
 %   maxiumum relative error for the entire motion.
@@ -12,10 +12,9 @@ function [Z, RE, mRE] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lam
 %   N           = series truncation of the conformal map power series c_k zeta^k.
 %   shswt       = shape switch = 0 (Laurent shape) , 1 (non-Laurent shape).
 %   shinp       = shape input -- LA_shape and SC_shape functions.
-%   tvec        = amplitude of noise.
-%                   Number of unknowns = n = 2N+3.
+%   tvec        = time vector.
 %   v0          = basic rate of spread (ROS).
-%   delta       = curvature parameter -- set to 0 in [1].
+%   delta       = curvature parameter.
 %   alpha       = ratio of radiative to convective ROS effects = [0,1].
 %   beta        = pyrogenic wind parameter.
 %   lambda      = ambient wind parameter.
@@ -28,14 +27,10 @@ function [Z, RE, mRE] = ROSSmain_v1_1(N,shswt,shinp,tvec,v0,delta,alpha,beta,lam
 %                   at time step t. (t=0: initial shape.)
 %
 % OPTIONAL OUTPUTS
-%   RE       = vector of the relative error the relative error of the
+%   RE       = vector of the relative error - the relative error of the
 %               rate of change of area law at each time step. 
 %
 %   mRE      = maximum relative error for the entire free boundary motion.
-%
-% REFERENCES
-%
-% [1]   Wildfire + Spotfire paper
 %
 % END OF DOCUMENTATION
 %
@@ -86,7 +81,7 @@ RE = abs((dArea-RHS)./dArea); mRE = max(RE); % relative error, max rel error
 end
 
 %% Appendix A: ROSSeqns
-function res = ROSSeqns(t,c,cdot,g,N,n,v0,delta,alpha,beta,lambda,U)
+function res = ROSSeqns(t,c,cdot,g,N,n,v0,delta,alpha,beta,lambda,U) % ODEs from the wildfire normal velocity equation
 theta = linspace(-pi,pi,n+1); zeta = exp(1i*theta); % unit zeta-disk.
 
 gd = gradient(g(zeta))./gradient(zeta); % first deriavtive of initial map g.

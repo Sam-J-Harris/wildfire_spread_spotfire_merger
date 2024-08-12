@@ -18,6 +18,11 @@ function g = shape_SC_v1(input)
 %       maps by rational functions. Numerische Mathematik, 142, 359-382.
 %   (See the references therein for the relevant shapes).
 %
+%   [2] Hilton, J. E., Sullivan, A. L., Swedosh, W., Sharples, J., & 
+%       Thomas, C. (2018). Incorporating convective feedback in wildfire 
+%       simulations using pyrogenic potential. Environ. Model. Soft., 
+%       107, 12-24.
+%
 % END OF DOCUMENTATION
 %
 %Code

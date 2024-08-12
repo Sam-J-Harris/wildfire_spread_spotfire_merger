@@ -1,16 +1,14 @@
 function ROSSplot_v1_1(bigZ,spc,fignum)
-scrsiz = get(0,'ScreenSize'); set(gcf, 'Position',  [scrsiz(3)/4, scrsiz(4)/8, scrsiz(3)/2.5, scrsiz(3)/4])
-%newcolors = {'k','#F00','#F80','#0B0','#00F','#A0F'};
-%colororder(newcolors)
+scrsiz = get(0,'ScreenSize'); set(gcf, 'Position',  [scrsiz(3)/4, scrsiz(4)/8, scrsiz(3)/2.5, scrsiz(3)/4]) % outputs the plots in specific position, dependent on user's screensize
 
-Zno = size(bigZ,2);
+Zno = size(bigZ,2); % number of experiments to be plotted, these appear in one long row
 for j=1:Zno
-    Z = bigZ{j};
+    Z = bigZ{j}; % jth experiment of a single fire evolution
     ftstep = size(Z,2); %final # of steps - note that ftstep =< itstep
     
     figure(fignum)
-    subplot(1, Zno, j);
-    set(gca,'XColor', 'none','YColor','none') %set(gca, 'color', 'none');
+    subplot(1, Zno, j); % puts fire evolution in the jth subfigure
+    set(gca,'XColor', 'none','YColor','none')
     hold on %uncomment/comment "hold" if you want/do not want to see each level set
     for k=1:spc:ftstep
         z = Z{k}; x = real(z); y=imag(z);

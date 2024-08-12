@@ -1,5 +1,5 @@
 function c0_est = shape_LA_v1(input,N,n)
-% Outputs the c coefficients of the Laurent conformal map 
+% Gives the c coefficients of the Laurent conformal map 
 %   z = g(zeta) = c_{-1}*zeta.^{-1} + c_k*zeta^k.
 %
 % SHAPE DIRECTORY
