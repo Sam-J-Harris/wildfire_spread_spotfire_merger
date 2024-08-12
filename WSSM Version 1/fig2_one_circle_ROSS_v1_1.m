@@ -7,7 +7,7 @@
 % Parameter values:
 %   v0=1; alpha = 0.5; delta=0.0; 
 %   beta=10; lambda=20;
-%   Umag=1.0; Uang=0; U=Umag*cos(Uang)+1i*Umag*sin(Uang); % wind properties
+%   Umag=1.0; Uang=0; 
 %   tmin = 0; tmax = 0.5; steps=1000; spc = 200
 %   N = 32, 64 and 128
 %

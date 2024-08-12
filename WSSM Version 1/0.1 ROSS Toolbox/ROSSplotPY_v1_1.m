@@ -1,14 +1,22 @@
 function ROSSplotPY_v1_1(bigZ,spc,fignum)
-% Comparing pyrogenic wind effect -- see figure 3.
-scrsiz = get(0,'ScreenSize'); set(gcf, 'Position',  [scrsiz(3)/4, scrsiz(4)/8, scrsiz(3)/2.5, scrsiz(3)/4])
+% Plots the wildfire evolution, specifically for figure 3.
+% Fixes the axes such that starting fire line appear in similar position.
+%
+% Inputs:
+%   bigZ = {Z1,Z2,...Zn}: list of n experiments of the wildfire boundary data.
+%   spc = determines how many isochrones are plotted - set spc = 1 to plot all.
+%   fignum = which figure the plots are presented in.
+%
+% Code:
+scrsiz = get(0,'ScreenSize'); set(gcf, 'Position',  [scrsiz(3)/4, scrsiz(4)/8, scrsiz(3)/2.5, scrsiz(3)/4]) % outputs the plots in specific position, dependent on user's screensize
 
-Zno = size(bigZ,2);
+Zno = size(bigZ,2);  % number of experiments to be plotted, these appear in one long row
 for j=1:Zno
-    Z = bigZ{j};
+    Z = bigZ{j}; % jth experiment of a single fire evolution
     ftstep = size(Z,2); %final # of steps - note that ftstep =< itstep
     
     figure(fignum)
-    subplot(1, Zno, j);
+    subplot(1, Zno, j); % puts fire evolution in the jth subfigure
     set(gca,'XColor', 'none','YColor','none') %set(gca, 'color', 'none');
     hold on %uncomment/comment "hold" if you want/do not want to see each level set
     for k=1:spc:ftstep
@@ -16,7 +24,7 @@ for j=1:Zno
 
     figure(fignum)
     subplot(1, Zno, j);
-    plot(x,y,'LineWidth',1.25), axis([-3 3 -1 6]); daspect([1 1 1]);
+    plot(x,y,'LineWidth',1.25), axis([-3 3 -1 6]); daspect([1 1 1]); % fixes axis size - specifically for figure 3.
     end
 end
 end
