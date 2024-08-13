@@ -25,11 +25,11 @@ inswt=1; % interpolate polygon switch = off (0), on at each time step (1).
 pcswt=1; % pole control switch = off (0), on (1).
 imswt=0; % image display switch = off (0), on (1).
 
-[resl, bigz, bigc, J] = ROSAshape_v1_3(shswt,prdt); % initial fire lines information - see function.
+[resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire lines information - see function.
 
 %% MAIN CODE AND PLOTTING
-[bigZ1, bigC1, bigJ1, merdata1, tmax1] = ROSAmain_v1_2(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt);
-bigDataPack = ROSAdcomp_v1_2(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile prdt and crdt into big data pack
+[bigZ1, bigC1, bigJ1, merdata1, tmax1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt);
+bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile prdt and crdt into big data pack
 %load('bigDataPack_v1_5_t160.mat'); spc = 1; shswt = 21; imswt = 0; %bring in prev data (comment out)
 bigZ = bigDataPack{1}; bigJ = bigDataPack{3};
 ROSAplot_v1_1(bigZ,bigJ,spc,shswt,imswt,1);
