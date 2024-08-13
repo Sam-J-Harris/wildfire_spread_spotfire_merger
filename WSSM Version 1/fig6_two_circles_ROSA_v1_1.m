@@ -8,7 +8,7 @@ v0 = 1; alphaL = [0 0.5 1]; delta=0.0; % basic ROS; rad/conv ratio (list of valu
 beta = 1.5; lambda = 3; % pyrogenic and ambi wind params.
 UmagL = [0 1]; Uang=pi/2; % ambiwind magnitude (list of values) and angle.
 
-fgswt = 23; % choice of alpha and U -- 1: alpha=0, 2: alpha = 0.5, 3: alpha=1 -- 10: U=0, 20: U=1. 
+fgswt = 11; % choice of alpha and U -- 1: alpha=0, 2: alpha = 0.5, 3: alpha=1 -- 10: U=0, 20: U=1. 
 alpha = alphaL(mod(fgswt,10)); Umag = UmagL(floor(fgswt/10)); U=Umag*cos(Uang)+1i*Umag*sin(Uang);
 
 if floor(fgswt/10) == 2 % smaller timestep for Awind included
