@@ -1,5 +1,6 @@
 # Wildfire spread and spotfire merger
-Supplementary material to [1].
+Supplementary material to [1]. 
+This is preliminary code and test data that has been provided, please contact the author (sam.harris.16@ucl.ac.uk) if you have any issues.
 
 ---- DATA ----
 
