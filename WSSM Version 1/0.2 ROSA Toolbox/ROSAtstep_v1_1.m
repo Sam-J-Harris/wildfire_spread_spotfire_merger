@@ -1,35 +1,45 @@
 %% Appendix A: Fire Timestepping function
 function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt)
-% = calculates normal velocity step delta z, then timesteps to find z_{t+1}.
+% ROSA timestepping function
+%   calculates normal velocity of each fire line at time t for given boundary data z_t.
+%   performs RK timestepping to give new boundary data z_{t+1}.
+% 
 % Code:
-k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding delta Z
-[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK0, RK2 or RK4 timestepping
+k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding normal velocity. 
+[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK1, RK2 or RK4 timestepping.
 end
 
 %% Appendix A1: Single Timestep
 function bigDel = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt)
-% = finds normal velocity step delta z.
+% = finds normal velocity and calculates the (initial) step delta z for the
+%   boundary data z_t.
+%
 % Code:
 for j=1:J
     dz = bigz{j} - circshift(bigz{j},-1); v = 1i.*(dz)./abs(dz); 
-    nVec{j} = -(v+circshift(v,1))./abs(v+circshift(v,1)); % normal vector for each fire
-    curv{j} = LineCurv(bigz{j}); % curvature
+    nVec{j} = -(v+circshift(v,1))./abs(v+circshift(v,1)); % unit normal vector for each fire line.
+    curv{j} = nVec{j}; % if no curvature effect.
+    if delta~=0
+        Ztemp = (bigz{j}).'; Vertices = [real(Ztemp); imag(Ztemp)].';
+        curv{j} = LineCurvature2D(Vertices); % curvature - requires LineCurvature2D function - see README file.
+    end
 end
 
-Pwind = nVec; % if no pyrowind effect
+Pwind = nVec; % if no pyrowind effect.
 if beta ~=0
-    Pwind = fireaaa(bigz,bigc,J,nVec,pcswt,imswt); % find pyrowind dphi/dn (AAA-LS)
+    Pwind = fireaaa(bigz,bigc,J,nVec,pcswt,imswt); % find pyrowind dphi/dn by AAA-LS algorithm - see function.
 end
 
 for j=1:J % find delta Z for each fire line
-    bigDel{j}=(alpha.*v0 - delta.*curv{j} + max(0, (1-alpha).*v0 + beta.*Pwind{j}+lambda.*cdot(U,nVec{j}))).*nVec{j};
+    bigDel{j}=(alpha.*v0 - delta.*curv{j} + max(0, (1-alpha).*v0 + beta.*Pwind{j}+lambda.*cdot(U,nVec{j}))).*nVec{j}; % normal velocity equation.
 end  
 end
 
 %% Appendix A2: AAA-least squares function
 function Pwind=fireaaa(bigz,bigc,J,nVec,pcswt,imswt)
 % = calculates pyrogenic wind effect dphi/dn by solving for phi in the fire line exterior.
-% Uses multiply connected AAA-LS method - see Costa & Trefethen 2023.
+% Uses multiply connected AAA-LS method - see e.g. Costa & Trefethen 2023.
+%
 % Code:
 inpolygonc = @(z,w) inpolygon(real(z),imag(z),real(w),imag(w)); % ftn to determine if point is inside polygon
 rtoly = pcswt*1e-13; ztoly = pcswt*1e-2; % residue/pole-zero tolerances (set pcswt=0 for no pole control)
