@@ -6,11 +6,14 @@ function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,
 %   Uses external function "LineCurvature2D" [1] and the "chebfun" package [2]
 %
 % Refs:
-%   [1] Dirk-Jan Kroon (2024). 2D Line Curvature and Normals 
-%       (https://www.mathworks.com/matlabcentral/fileexchange/32696-2d-line-curvature-and-normals), 
-%       MATLAB Central File Exchange. Retrieved August 13, 2024.
+%   [1] Canos, A.J., 2024. Fast and robust self-intersections. MATLAB 
+%       Central File Exchange. Retrieved August 1, 2024. 
+%       URL:(https://www.mathworks.com/matlabcentral/fileexchange/13351-fast-and-robust-self-intersections).
 %
-%   [2] Chebfun package: https://www.chebfun.org/
+%   [2] D’Errico, J., 2024. interparc. MATLAB Central File Exchange. 
+%       Retrieved August 1, 2024. 
+%       URL: (https://www.mathworks.com/matlabcentral/fileexchange/34874-interparc).
+% 
 % 
 % Code:
 k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding normal velocity. 

@@ -56,11 +56,15 @@ end
 
 %% Appendix C2: Fire Line Smooth and Interp Function
 function znew = firesmooth(zold, Pts, smno)
-% = smooths fire line and interpolates to desired numbers of pts
+% = smooths fire line and interpolates to desired resolution.
+%   Uses "interparc" function [2].
+%   Identical to Appendix B2 in ROSAsmooth.
+%
 % Code:
 znew = zold;
-for k = 1:smno % smooths a certain number of times
-    znew = smoothdata(znew,'gaussian', 4); znew = [znew; znew(1)]; % smooth and close
-    znew = fireinterp(znew,Pts,'spline'); % interpolate smoothed data
+for k = 1:smno % smooths a certain number of times.
+    znew = smoothdata(znew,'gaussian', 4); znew = [znew; znew(1)]; % smooth and close the polygon.
+    pt = interparc(Pts,real(znew), imag(znew),'spline'); % interpolates smoothed data.
+    znew = pt(:,1)+1i*pt(:,2); % new boundary data.
 end
 end
