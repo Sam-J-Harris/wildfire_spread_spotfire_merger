@@ -51,7 +51,7 @@ if overlaps(poly1,poly2) % determine if the fire lines overlap
     polyun = union(poly1,poly2); [X,Y] = boundary(polyun); Z = X+1i*Y; % create union (merge) of the two lines and extract the boundary.
     if ~ispolycw(X,Y), Z = flip(Z); end % flip if anticlockwise - polygon must be oriented clockwise such that normal vector in correct direction.
     Pts = size(Z,1); smno=20; Zsm = firesmooth(Z,Pts,smno); % smooth the fire line.
-    mergeZ{1} = circshift(Zsm,round(4*Pts/5)); % shift the fire line ordering to move start point away from (potential) fire junction.
+    mergeZ{1} = circshift(Zsm,round(4*Pts/5)); % shift the fire line ordering to move start point away from (poten
 else
     mergeZ{1} = z1; mergeZ{2} = z2; % output the input data if no overlap
 end

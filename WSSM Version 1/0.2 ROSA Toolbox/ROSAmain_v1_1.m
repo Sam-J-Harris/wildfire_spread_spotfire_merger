@@ -36,6 +36,6 @@ for m=1:steps
 
     elapsedtime=toc; totaltime=totaltime+elapsedtime; % update total runtime.
     if m~=1, fprintf(repmat('\b',1,lineLength)), end
-    lineLength= fprintf('AAA-LS Fire: Step %d of %d completed in %.1f seconds. \n Total time: %.1f seconds.\n',m,steps,elapsedtime,totaltime); %feedback to user on time taken for this time step.
+    lineLength= fprintf('AAA-LS Fire: Step %d of %d completed in %.1f seconds. \n Total time: %.1f seconds.\n',m,steps,elapsedtime,totaltime); % feedback to user on time taken for this time step.
 end
 end

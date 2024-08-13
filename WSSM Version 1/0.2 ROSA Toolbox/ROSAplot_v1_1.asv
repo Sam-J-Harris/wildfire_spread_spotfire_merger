@@ -28,7 +28,8 @@ title("Spread of multiple spotfires",'interpreter','latex','FontSize',18),
 %   
 %   If not, the above figure will be just fine.
 %
-% Code:
+
+%
 % if shswt==1 || shswt==2 % additional plots for comparing with Hilton 2018 data
 %   
 %     scl = 1.7; axl = 5.0./scl; epsx = 0.0; epsy = 5.0./scl; % account for image scaling
