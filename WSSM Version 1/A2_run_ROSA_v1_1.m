@@ -29,4 +29,3 @@ imswt=1; % image display switch = off (0), on (1) - see images during the timest
 bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile previous data (if applicable) and current data into big data pack - see function.
 bigZ = bigDataPack{1}; bigJ = bigDataPack{3}; % extract Z (boundary data) and J (no. of wildfires) values.
 ROSAplot_v1_1(bigZ,bigJ,spc,shswt,imswt,1); % plot fire line evolution - see function.
-totaltime=round(toc,2); fprintf("Fire Complete. Total time = "+num2str(totaltime)+" seconds.\n"); % stop timer, output message for the user.
