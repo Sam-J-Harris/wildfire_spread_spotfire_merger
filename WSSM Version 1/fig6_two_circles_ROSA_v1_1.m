@@ -1,7 +1,23 @@
 %% ROSA: Rate Of Spread Simulator - AAA-LS method (Multiple Spotfires) -- RUN
-% Figure 6 - Two circular fires with various values of alpha and Umag
-clc; close all; clear; set(0,'DefaultFigureVisible','on'); warning('off');
-fprintf('ROSA Activated: Beginning Spotfire Simulation\n'); tic;
+% Figure 6 - two circular fires with various values of alpha and Umag
+%
+% Author's runtime: 
+%   Fig6a (U=0, alpha=0.0):
+%   Fig6b (U=0, alpha=0.5):
+%   Fig6c (U=0, alpha=1.0):
+%   Fig6d (U=1, alpha=0.0):
+%   Fig6e (U=1, alpha=0.5):
+%   Fig6f (U=1, alpha=1.0):
+%
+% Parameter values:
+%   v0=1; alpha = [0 0.5 1]; delta=0.0; 
+%   beta=1.5; lambda=3;
+%   Umag=[0 1]; Uang=pi/2; 
+%   tstep = [0.005 0.05]; steps = [50 5]; spc = [10 1]; rkswt = 0;
+%
+% Code:
+clc; close all; clear; set(0,'DefaultFigureVisible','on'); warning('off'); % clear workspace
+fprintf('ROSA Activated: Beginning Spotfire Simulation\n'); tic; % startup message to the user
 
 %% PARAMETER SET-UP -- USER INPUT
 v0 = 1; alphaL = [0 0.5 1]; delta=0.0; % basic ROS; rad/conv ratio (list of values); curvature param.
@@ -19,17 +35,18 @@ end
 tmin=0; tmax = tstep*steps; tvec = linspace(tmin,tmax,steps+1); % min and max times, time vector.
 
 shswt=06; % shape switch = circles (0), Hilton 2018 Fig 8 (1) - see function for more.
-prdt = 'bigDataPack_v1_7_t1070.mat'; % previous wildfire data (only for shswt=2).; % previous fire line data (only for shswt = 2 or 21, put 0 otherwise.
+prdt = 'bigDataPack_v1_7_t1070.mat'; % previous wildfire data (only for shswt=2+).
 rkswt=0; % Runge-Kutta (RK) switch = standard (0), RK2 (2) or RK4 (1 or 4) timestepping.
-inswt=1; % interpolate polygon switch = off (0), on at each time step (1).
-pcswt=1; % pole control switch = off (0), on (1).
-imswt=0; % image display switch = off (0), on (1).
+inswt=1; % interpolate polygon switch = off (0), on at each time step (1) - pad polygon at each time step so that the resolution of points is fixed.
+pcswt=1; % pole control switch = off (0), on (1) - manually remove Froissart doublets in AAA step.
+imswt=0; % image display switch = off (0), on (1) - see images during the timestepping procedure.
 
-[resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire lines information - see function.
+[resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire line shapes - see function.
 
 %% MAIN CODE AND PLOTTING
-[bigZ1, bigC1, bigJ1, merdata1, tmax1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt);
-bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile prdt and crdt into big data pack
-%load('bigDataPack_v1_5_t160.mat'); spc = 1; shswt = 21; imswt = 0; %bring in prev data (comment out)
-bigZ = bigDataPack{1}; bigJ = bigDataPack{3};
-ROSAplot_v1_1(bigZ,bigJ,spc,shswt,imswt,1);
+[bigZ1, bigC1, bigJ1, merdata1, tmax1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt); % main time stepping algorithm - see function.
+bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile previous data (if applicable) and current data into big data pack - see function.
+%load('bigDataPack_v1_5_t160.mat'); spc = 1; shswt = 21; imswt = 0; % bring in prev data (comment out if needed)
+bigZ = bigDataPack{1}; bigJ = bigDataPack{3}; % extract Z (boundary data) and J (no. of wildfires) values.
+ROSAplot_v1_1(bigZ,bigJ,spc,shswt,imswt,1); % plot fire line evolution - see function.
+totaltime=round(toc,2); fprintf("Fire Complete. Total time = "+num2str(totaltime)+" seconds.\n"); % stop timer, output message for the user.

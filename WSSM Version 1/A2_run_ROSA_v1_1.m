@@ -16,10 +16,10 @@ tstep=0.001; steps = 5; spc=1; % size of each time step, number of time steps, p
 tmin=0; tmax = tstep*steps; tvec = linspace(tmin,tmax,steps+1); % min and max times, time vector.
 
 shswt=0; % shape switch = circles (0), Hilton 2018 Fig 8 (1) - see function for more.
-prdt = 'bigDataPack_v1_3.mat'; % previous wildfire data (only for shswt=20+);
+prdt = 'bigDataPack_v1_3.mat'; % previous wildfire data (only for shswt=2+).
 rkswt=0; % Runge-Kutta (RK) switch = standard (0), RK2 (2) or RK4 (1 or 4) timestepping.
-inswt=1; % interpolate polygon switch = off (0), on at each time step (1) - pad polygon at each time step so that the resolution of points is fixed
-pcswt=1; % pole control switch = off (0), on (1) - manually remove Froissart doublets in AAA step
+inswt=1; % interpolate polygon switch = off (0), on at each time step (1) - pad polygon at each time step so that the resolution of points is fixed.
+pcswt=1; % pole control switch = off (0), on (1) - manually remove Froissart doublets in AAA step.
 imswt=0; % image display switch = off (0), on (1) - see images during the timestepping procedure.
 
 [resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire line shapes - see function.
