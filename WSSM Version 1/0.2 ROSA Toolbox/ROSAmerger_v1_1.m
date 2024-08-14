@@ -7,7 +7,7 @@ function [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt
 imcnt = mcnt; % "initial merge counter": variable to assess if fires have merged this step
 for j=1:J-1 % iterate through all fires
     if j<=J-1 % checks that J has not decreased during this loop
-        mergeZ = firemerge(bigz{j}, bigz{j+1}); % checks if fires j and j+1 are overlapping*
+        mergeZ = firemerge(bigz{j}, bigz{j+1},bigz,j,J); % checks if fires j and j+1 are overlapping*
         if size(mergeZ,2)==1 % if a merge has happened
             premerge = bigz; % original z data
             bigz{j} = mergeZ{1}; % replace fire line in jth array (centre of merged fire line = centre of jth fire line)
@@ -37,7 +37,7 @@ end
 end
 
 %% Appendix C1: Merge Function
-function mergeZ = firemerge(z1,z2)
+function mergeZ = firemerge(z1,z2,bigz,j,J)
 % = determine if fire lines z1 and z2 overlap and merge them with the
 %   MATLAB "union" function if they do.
 %
@@ -51,7 +51,22 @@ if overlaps(poly1,poly2) % determine if the fire lines overlap
     polyun = union(poly1,poly2); [X,Y] = boundary(polyun); Z = X+1i*Y; % create union (merge) of the two lines and extract the boundary.
     if ~ispolycw(X,Y), Z = flip(Z); end % flip if anticlockwise - polygon must be oriented clockwise such that normal vector in correct direction.
     Pts = size(Z,1); smno=20; Zsm = firesmooth(Z,Pts,smno); % smooth the fire line.
-    mergeZ{1} = circshift(Zsm,round(4*Pts/5)); % shift the fire line ordering to move start point away from (potential) fire junction.
+    
+    % Shift start/end of fire line away from fire junctions - areas of high curvature.
+    Vertices = [real(Zsm.'); imag(Zsm.')].'; curvZ = LineCurvature2D(Vertices); % curvature of each point on the merged fire line.
+    cmax = max(abs(curvZ)); pos = curvZ==cmax; % identifies the maximum curvature and its position in the boundary data.
+    zmpk = Zsm(pos); % identifies the point with the highest curvature - the "peak point".
+    zdis = abs(Zsm-zmpk.*ones(size(Zsm))); % find distance between "peak point" and all other boundary data.
+    if J~=2 % if there are three fires, choose beginning point furthest from the other wildfire.
+        z3 = bigz{j+2}; zdis2 = abs(Zsm-z3(1)*ones(size(Zsm)));
+        zdis = zdis+zdis2; % adds the distance of each boundary point to the other wildfire.
+    end
+    zdmax = max(zdis); % finds distance of the point furthest from the peak point (plus the other wildfire, if applicable).
+    
+    while zdis(1)<zdmax % shifts Z coordinates until the start pt is the pt furthest from the peak point (and other wildfire, if applicable).
+        Zsm = circshift(Zsm,-1); zdis = circshift(zdis,-1);
+    end 
+    mergeZ{1} = Zsm; % the final, new merged fire line.
 else
     mergeZ{1} = z1; mergeZ{2} = z2; % output the input data if no overlap
 end

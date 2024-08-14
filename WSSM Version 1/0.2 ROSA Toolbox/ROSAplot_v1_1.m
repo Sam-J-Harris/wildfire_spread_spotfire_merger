@@ -16,8 +16,7 @@ for k=1:spc:Fsteps % plot steps with spacing.
         plot(x,y,'LineWidth',1.25), hold on,
     end
 end
-hold off, daspect([1 1 1]),
-if shswt==07, axis([-3 3 -3 3]); end % fix axes for three circles example.
+hold off, daspect([1 1 1]), 
 title("Spread of multiple spotfires",'interpreter','latex','FontSize',18),
 
 %% Hilton et al. 2018 additional figures
