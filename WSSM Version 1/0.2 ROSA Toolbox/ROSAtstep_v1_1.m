@@ -125,7 +125,7 @@ function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lamb
 %   either Euler's method (RK1), second order RK (RK2) or fourth order RK (RK4).
 %
 % Code:
-tstepa = tstep; tstepm = 0.0025; % actual tstep value (changes if emergency RK1 used); modified tstep for emergency RK1
+tstepa = tstep; tstepm = 0.0005; % actual tstep value (changes if emergency RK1 used); modified tstep for emergency RK1
 if rkswt==0 % RK1
     for j = 1:J, bigz{j} = bigz{j}+tstep*k1{j}; end % computes RK1 time step
 else % either RK2 or RK4

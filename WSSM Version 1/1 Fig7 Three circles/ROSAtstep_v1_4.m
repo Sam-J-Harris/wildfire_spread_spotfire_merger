@@ -1,9 +1,9 @@
 %% Appendix A: Fire Timestepping function
-function [bigz,tmax] = ROSAtstep_v1_4(bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt)
+function [bigz,tmax] = ROSAtstep_v1_4(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt)
 % = calculates normal velocity step delta z, then timesteps to find z_{t+1}.
 % Code:
 k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding delta Z
-[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK0, RK2 or RK4 timestepping
+[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK0, RK2 or RK4 timestepping
 end
 
 %% Appendix A1: Single Timestep
@@ -101,10 +101,10 @@ end
 end
 
 %% Appendix A3: Runge Kutta Function - NEED TO FIX
-function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,merdata,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,inswt,imswt)
+function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,inswt,imswt)
 % = timesteps using Runge Kutta approach, either Euler's method (RK1), second order RK (RK2) or fourth order RK (RK4).
 % Code:
-tstepa = tstep; tstepm = 0.00075; % actual tstep value (changes if emergency RK1 used); modified tstep for RK1
+tstepa = tstep; tstepm = 0.0005; % actual tstep value (changes if emergency RK1 used); modified tstep for RK1
 if rkswt==0 % RK1
     for j = 1:J, bigz{j} = bigz{j}+tstep*k1{j}; end % computes RK1 timestep
 else % either RK2 or RK4

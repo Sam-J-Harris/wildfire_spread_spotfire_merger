@@ -64,7 +64,7 @@ elseif shswt==2 % load in previous Hilton et al. 2018 wildfire data.
     end
     J = Jtemp{end};
 
-elseif shswt==21 % load in previous n-fold shape wildfire data.
+elseif shswt==21 % load in previous n-shape wildfire data.
     load(prdt,'bigDataPack');
     Jtemp = bigDataPack{3}; Jst = Jtemp{1}; J = Jtemp{end}; % need "temp" files if fires merged previously.
     Ztemp = bigDataPack{1}; Ctemp = bigDataPack{2};
@@ -72,7 +72,6 @@ elseif shswt==21 % load in previous n-fold shape wildfire data.
          bigz{j} = Ztemp{j,end}; bigc{j} = Ctemp{j,end};
     end
 
-%% n-fold shapes otherwise - as configured above
 else % n-fold shapes
     J=size(bigc,2); % set up z and c arrays, J = no. of fires.
     for j=1:J
