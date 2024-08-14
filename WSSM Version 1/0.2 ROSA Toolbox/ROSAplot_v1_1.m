@@ -17,6 +17,7 @@ for k=1:spc:Fsteps % plot steps with spacing.
     end
 end
 hold off, daspect([1 1 1]),
+if shswt==07, axis([-3 3 -3 3]); end % fix axes for three circles example.
 title("Spread of multiple spotfires",'interpreter','latex','FontSize',18),
 
 %% Hilton et al. 2018 additional figures
@@ -30,7 +31,6 @@ title("Spread of multiple spotfires",'interpreter','latex','FontSize',18),
 %
 % Code:
 % if shswt==1 || shswt==2 % additional plots for comparing with Hilton 2018 data
-%   
 %     scl = 1.7; axl = 5.0./scl; epsx = 0.0; epsy = 5.0./scl; % account for image scaling
 %     load('hilton_data.mat','I'); m=1; % loads background images
 % 

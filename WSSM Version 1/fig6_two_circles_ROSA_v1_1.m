@@ -44,8 +44,8 @@ imswt=0; % image display switch = off (0), on (1) - see images during the timest
 [resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire line shapes - see function.
 
 %% MAIN CODE AND PLOTTING
-[bigZ1, bigC1, bigJ1, merdata1, tmax1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt); % main time stepping algorithm - see function.
-bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,prdt,shswt); % compile previous data (if applicable) and current data into big data pack - see function.
+[bigZ1, bigC1, bigJ1, merdata1, tmax1,rtot1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt); % main time stepping algorithm - see function.
+bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,rtot1,prdt,shswt); % compile previous data (if applicable) and current data into big data pack - see function.
 %load('bigDataPack_v1_5_t160.mat'); spc = 1; shswt = 21; imswt = 0; % bring in prev data (comment out if needed)
 bigZ = bigDataPack{1}; bigJ = bigDataPack{3}; % extract Z (boundary data) and J (no. of wildfires) values.
 ROSAplot_v1_1(bigZ,bigJ,spc,shswt,imswt,1); % plot fire line evolution - see function.

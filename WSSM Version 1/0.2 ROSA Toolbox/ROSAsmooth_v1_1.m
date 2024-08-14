@@ -48,7 +48,7 @@ if size(segments,2)~=0 && size(segments,1)~=0 % ie there are overlapping segment
     end
     zt(zt==0)=[]; Pts = size(zt,1); smno = 1;
     znew = firesmooth(zt,Pts,smno); % remove all 0 points from fire line data and smooths curve
-    ROSAsimage_v1_1(z,zt,x0,y0,imswt) % shows image of overlapping segments,  if imswt is turned on.
+    ROSAsimage_v1_1(z,zt,x0,y0,imswt) % shows image of overlapping segments, if imswt is turned on.
 end
 end
 

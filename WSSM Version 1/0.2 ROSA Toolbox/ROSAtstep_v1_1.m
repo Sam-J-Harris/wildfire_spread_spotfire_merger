@@ -13,7 +13,7 @@ function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,
 %   [2] Chebfun package: https://www.chebfun.org/
 % 
 % Code:
-k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding normal velocity. 
+k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding normal velocity.
 [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK1, RK2 or RK4 timestepping.
 end
 
@@ -94,11 +94,11 @@ ROSApimage_v1_1(Allpols,bigz,J,phi,imswt); % contour plot of exterior phi at tim
 eps = 1e-8; % compute dphi/dn = phi(z+ndz) - phi(z) / eps - take eps = 1e-8 as a standard.
 for j=1:J
     z = bigz{j}; znew = z+eps*nVec{j};
-    Pwind{j} = (phi(znew)-phi(z))./abs(eps); % pyrogenic wind term
+    Pwind{j} = (phi(znew)-phi(z))./abs(eps); % pyrogenic wind term.
 end
 
 %%% Additional Functions
-    function bigprod=h(Z,bigc,J) % Dirichlet boundary condition accounting for far field condition: phi->-H=-log|h| as z->infty
+function bigprod=h(Z,bigc,J) % Dirichlet boundary condition accounting for far field condition: phi->-H=-log|h| as z->infty.
     bigprod = 1;
     for k=1:J
         bigprod=bigprod.*(Z-bigc{k});
@@ -125,16 +125,15 @@ function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lamb
 %   either Euler's method (RK1), second order RK (RK2) or fourth order RK (RK4).
 %
 % Code:
-tstepa = tstep; tstepm = 0.0005; % actual tstep value (changes if emergency RK1 used); modified tstep for emergency RK1
+tstepa = tstep; tstepm = 0.0005; % actual tstep value (changes if emergency RK1 used); modified tstep for emergency RK1.
 if rkswt==0 % RK1
-    for j = 1:J, bigz{j} = bigz{j}+tstep*k1{j}; end % computes RK1 time step
+    for j = 1:J, bigz{j} = bigz{j}+tstep*k1{j}; end % computes RK1 time step.
 else % either RK2 or RK4
     olap=1; sint = 1; % overlapping and self intersect counters: 1 if no overlaps or self intersects, 0 otherwise.
-    for j = 1:J, bigz1t{j} = bigz{j} + (tstep/2).*k1{j}; 
-    end % update fire line in prep for k2
+    for j = 1:J, bigz1t{j} = bigz{j} + (tstep/2).*k1{j}; end % update fire line in prep for k2
     bigz1 = ROSAsmooth_v1_1(bigz1t,mcnt,J,resl,inswt,imswt); % fire line smoothing
     for j = 1:J, sint = min(sint,size(bigz1{j},1)==size(bigz1t{j},1)); end % see if any self intersects have been deleted
-    for j = 1:J-1, olap = overlapchk(bigz1{j}, bigz1{j+1},olap); end % see if any fire lines overlap others
+    for j = 1:J-1, olap = olapchk(bigz1{j}, bigz1{j+1},olap); end % see if any fire lines overlap others
     if olap==0 || sint==0 % if fire lines overlap or self intersect, do RK1 with modified tstep
         tstepa = tstepm; for j = 1:J, bigz{j} = bigz{j}+tstepa*k1{j}; end % computes RK1 time step 
     else
@@ -146,14 +145,14 @@ else % either RK2 or RK4
             for j = 1:J, bigz2t{j} = bigz{j} + (tstep/2).*k2{j}; end % update fire line in prep for k3
             bigz2 = ROSAsmooth_v1_1(bigz2t,mcnt,J,resl,inswt,imswt); % fire line smoothing
             for j = 1:J, sint = min(sint,size(bigz2{j},1)==size(bigz2t{j},1)); end % see if any self intersects have been deleted
-            for j = 1:J-1, olap = overlapchk(bigz2{j}, bigz2{j+1},olap); end % see if any fire lines overlap others
+            for j = 1:J-1, olap = olapchk(bigz2{j}, bigz2{j+1},olap); end % see if any fire lines overlap others
             if olap==0 || sint==0, bigz = zrk2; % if a merge/self intersect has happened, just do RK2
             else
                 k3 = firestep(bigz2,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % compute k3
                 for j = 1:J, bigz3t{j} = bigz{j} + tstep.*k3{j}; end % update fire line in prep for k4
                 bigz3 = ROSAsmooth_v1_1(bigz3t,mcnt,J,resl,inswt,imswt); % fire line smoothing
                 for j = 1:J, sint = min(sint,size(bigz3{j},1)==size(bigz3t{j},1)); end % see if any self intersects have been deleted
-                for j = 1:J-1, olap = overlapchk(bigz3{j}, bigz3{j+1},olap); end % see if any fire lines overlap others
+                for j = 1:J-1, olap = olapchk(bigz3{j}, bigz3{j+1},olap); end % see if any fire lines overlap others
                 if olap==0 || sint==0, bigz = zrk2; % if a merge/self intersect has happened, just do RK2
                 else
                     k4 = firestep(bigz3,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % compute k4
@@ -174,7 +173,7 @@ dotprod = x1*x2 + y1*y2;
 end
 
 %% Appendix A5: Check if fires overlap
-function olap = overlapchk(z1, z2, olapi) % check if two fire lines overlap
+function olap = olapchk(z1, z2, olapi) % check if two fire lines overlap
 x1 = real(z1); y1 = imag(z1); x1 = x1(~isnan(x1)); y1 = y1(~isnan(y1));
 x2 = real(z2); y2 = imag(z2); x2 = x2(~isnan(x2)); y2 = y2(~isnan(y2)); % remove any NaN points from data
 poly1 = polyshape(x1,y1); poly2 = polyshape(x2,y2); % convert to polyshape objects
