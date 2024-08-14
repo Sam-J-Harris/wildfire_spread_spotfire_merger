@@ -1,4 +1,4 @@
-function [bigZ, bigC, bigJ, merdata, tmax, rtot] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt)
+function [bigZ, bigC, bigJ, merdata, tmax, rtot] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt,shswt)
 % ROSA Main Code = produces fire line evolution and merger (if applicable)
 %
 % OUTPUTS
@@ -24,9 +24,9 @@ merdata = {}; mcnt=size(bigz,2)-J; tmax=0; rtot=0; % empty array ready for merge
 %% The TimeStepping Loop
 for m=1:steps
     tic; % set timer.
-    [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt); % fire time step - see function.
+    [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt,shswt); % fire time step - see function.
     bigz = ROSAsmooth_v1_1(bigz,mcnt,J,resl,inswt,imswt); % fire line smoothing - see function.
-    [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt,J,resl,inswt,imswt); % fire merge (and smooth if necessary) - see function.
+    [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt,J,resl,inswt,imswt,shswt); % fire merge (and smooth if necessary) - see function.
 
     for j=1:J % update lists.
         bigZ{j,m+1}=bigz{j}; %update Z list.

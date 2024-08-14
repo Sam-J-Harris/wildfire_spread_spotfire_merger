@@ -1,5 +1,5 @@
 %% Appendix A: Fire Timestepping function
-function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt)
+function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,imswt,shswt)
 % ROSA timestepping function
 %   calculates normal velocity of each fire line at time t for given boundary data z_t.
 %   performs RK timestepping to give new boundary data z_{t+1}.
@@ -13,12 +13,12 @@ function [bigz,tmax] = ROSAtstep_v1_1(bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,
 %   [2] Chebfun package: https://www.chebfun.org/
 % 
 % Code:
-k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % finding normal velocity.
-[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt); % computes RK1, RK2 or RK4 timestepping.
+k1 = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt,shswt); % finding normal velocity.
+[bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,2,imswt,shswt); % computes RK1, RK2 or RK4 timestepping.
 end
 
 %% Appendix A1: Single Timestep
-function bigDel = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt)
+function bigDel = firestep(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt,shswt)
 % = finds normal velocity and calculates the (initial) step delta z for the
 %   boundary data z_t.
 %
@@ -39,7 +39,7 @@ if beta ~=0
 end
 
 for j=1:J % find delta Z for each fire line
-    bigDel{j}=(alpha.*v0 - delta.*curv{j} + max(0, (1-alpha).*v0 + beta.*Pwind{j}+lambda.*cdot(U,nVec{j}))).*nVec{j}; % normal velocity equation.
+    bigDel{j}=(tau(bigz{j},shswt).*(alpha.*v0 - delta.*curv{j} + max(0, (1-alpha).*v0 + beta.*Pwind{j}+lambda.*cdot(U,nVec{j})))).*nVec{j}; % normal velocity equation.
 end  
 end
 
@@ -120,12 +120,17 @@ end
 end
 
 %% Appendix A3: Runge Kutta Function
-function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,inswt,imswt)
+function [bigz, tmax] = fireRK(k1,bigz,bigc,tmax,mcnt,J,v0,delta,alpha,beta,lambda,U,tstep,rkswt,pcswt,resl,inswt,imswt,shswt)
 % = iterates through time using Runge Kutta approach
 %   either Euler's method (RK1), second order RK (RK2) or fourth order RK (RK4).
 %
 % Code:
-tstepa = tstep; tstepm = 0.0005; % actual tstep value (changes if emergency RK1 used); modified tstep for emergency RK1.
+tstepa = tstep; % actual tstep value (changes if emergency RK1 used); 
+if shswt == 123 || shswt == 124 || shswt == 125 % modified tstep for emergency RK1 - different value used for firebreak examples.
+    tstepm=0.00075;
+else
+    tstepm = 0.0005; 
+end
 if rkswt==0 % RK1
     for j = 1:J, bigz{j} = bigz{j}+tstep*k1{j}; end % computes RK1 time step.
 else % either RK2 or RK4
@@ -137,7 +142,7 @@ else % either RK2 or RK4
         tstepa = tstepm; for j = 1:J, bigz{j} = bigz{j}+tstepa*k1{j}; end % computes RK1 time step 
     else
         bigz1 = ROSAsmooth_v1_1(bigz1t,mcnt,J,resl,inswt,imswt); % fire line smoothing
-        k2 = firestep(bigz1,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % compute k2
+        k2 = firestep(bigz1,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt,shswt); % compute k2
         for j = 1:J, zrk2{j} = bigz{j}+tstep*k2{j}; end % computes RK2 timestep
         if rkswt ==2 %RK2
             bigz = zrk2;
@@ -148,14 +153,14 @@ else % either RK2 or RK4
             if olap==0 || sint==0, bigz = zrk2; % if a merge/self intersect has happened, just do RK2
             else
                 bigz2 = ROSAsmooth_v1_1(bigz2t,mcnt,J,resl,inswt,imswt); % fire line smoothing
-                k3 = firestep(bigz2,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % compute k3
+                k3 = firestep(bigz2,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt,shswt); % compute k3
                 for j = 1:J, bigz3t{j} = bigz{j} + tstep.*k3{j}; end % update fire line in prep for k4
                 for j = 1:J, sint = sintchk(bigz3t{j},sint); end % see if any self intersects have been deleted
                 for j = 1:J-1, olap = olapchk(bigz3t{j}, bigz3t{j+1},olap); end % see if any fire lines overlap others
                 if olap==0 || sint==0, bigz = zrk2; % if a merge/self intersect has happened, just do RK2
                 else
                     bigz3 = ROSAsmooth_v1_1(bigz3t,mcnt,J,resl,inswt,imswt); % fire line smoothing
-                    k4 = firestep(bigz3,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt); % compute k4
+                    k4 = firestep(bigz3,bigc,J,v0,delta,alpha,beta,lambda,U,pcswt,imswt,shswt); % compute k4
                     for j = 1:J
                         bigz{j} = bigz{j}+(tstep/6)*(k1{j}+2.*k2{j}+2.*k3{j}+k4{j}); end % computes RK4 timestep
                 end
@@ -196,4 +201,26 @@ if overlaps(poly1,poly2)
 else
     olap = olapi;
 end 
+end
+
+%% Appendix A7: Fire terrain function
+function t = tau(Z,shswt)
+    sZ = size(Z); msZ = max(sZ); t = 1*ones(sZ);
+    for k=1:msZ
+        z = Z(k);
+        if shswt == 121 || shswt == 124 || shswt == 224 % infinite wall at 1.5<x<1.7
+            if (real(z)>1.5) && (real(z)<1.7)
+                t(k) = 0; 
+            end
+        elseif shswt == 122 %gap: wall at 1.5<x<1.7, gap at -0.5<y<0.5
+            gp = 0.5;
+            if (real(z)>1.5) && (real(z)<1.7) && ((imag(z)<-gp)||(imag(z)>gp)) 
+                t(k) = 0; 
+            end
+        elseif shswt == 125 || shswt == 225
+            if abs(z)<0.5
+                t(k)=0;
+            end
+        end
+    end
 end

@@ -16,6 +16,39 @@ for k=1:spc:Fsteps % plot steps with spacing.
         plot(x,y,'LineWidth',1.25), hold on,
     end
 end
+
+%% Firebreak features (if applicable)
+if shswt == 121 || shswt == 124 % infinite wall
+    xl = 4.5; Pts = 500; yln = linspace(-xl,xl,Pts);
+    x1 = 1.5*ones(size(yln)); x2 = 1.7*ones(size(yln)); 
+    
+    yln3 = linspace(-xl,xl,200); x3 = 1.6*ones(size(yln3));
+     
+    lw = 2; plot(x1,yln,'k','LineWidth',lw); plot(x2,yln,'k','LineWidth',lw); % two boundaries of the road
+    patch([1.5 1.5 1.7 1.7], 1.1*[-xl xl xl -xl], 'k'); % road tarmac
+    plot(x3,yln3,'--w','LineWidth',2); % white dotted line to separate road traffic
+
+    set(gca,'XColor', 'none','YColor','none'),
+    axis([-xl xl -xl xl])
+elseif shswt == 122 % gap
+    xl = 4; gp = 0.5; Pts = 500; 
+    yln1 = linspace(-xl,-gp,ceil(Pts/2)); yln2 = linspace(gp,xl,ceil(Pts/2));
+    x1 = 1.5*ones(size(yln1)); x2 = 1.7*ones(size(yln1));
+
+    x3 = linspace(1.5,1.7,ceil(Pts/2)); x4 = linspace(1.5,1.7,ceil(Pts/2));
+    y3 = -gp.*ones(size(x3)); y4 = gp.*ones(size(x4));
+    
+    lw = 2; plot(x1,yln1,'k','LineWidth',lw); plot(x2,yln1,'k','LineWidth',lw);
+    plot(x1,yln2,'k','LineWidth',lw); 
+    plot(x2,yln2,'k','LineWidth',lw);
+    plot(x3,y3,'k','LineWidth',lw); 
+    plot(x4,y4,'k','LineWidth',lw);
+    axis([-xl xl -xl xl])
+elseif shswt == 125 % lake
+    xl = 5; lrad = 0.5; lz = lrad.*exp(1i*linspace(-pi,pi,500));
+    lx = real(lz); ly = imag(lz);
+    patch(lx,ly,'blue');
+end
 hold off, daspect([1 1 1]), 
 title("Spread of multiple spotfires",'interpreter','latex','FontSize',18),
 

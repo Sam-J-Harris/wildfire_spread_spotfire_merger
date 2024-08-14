@@ -24,7 +24,7 @@ v0 = 1; alphaL = [0 0.5 1]; delta=0.0; % basic ROS; rad/conv ratio (list of valu
 beta = 1.5; lambda = 3; % pyrogenic and ambi wind params.
 UmagL = [0 1]; Uang=pi/2; % ambiwind magnitude (list of values) and angle.
 
-fgswt = 23; % choice of alpha and U -- 1: alpha=0, 2: alpha = 0.5, 3: alpha=1 -- 10: U=0, 20: U=1. 
+fgswt = 22; % choice of alpha and U -- 1: alpha=0, 2: alpha = 0.5, 3: alpha=1 -- 10: U=0, 20: U=1. 
 alpha = alphaL(mod(fgswt,10)); Umag = UmagL(floor(fgswt/10)); U=Umag*cos(Uang)+1i*Umag*sin(Uang);
 
 if floor(fgswt/10) == 2 % smaller timestep for Awind included
@@ -44,7 +44,7 @@ imswt=0; % image display switch = off (0), on (1) - see images during the timest
 [resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt); % initial fire line shapes - see function.
 
 %% MAIN CODE AND PLOTTING
-[bigZ1, bigC1, bigJ1, merdata1, tmax1,rtot1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt); % main time stepping algorithm - see function.
+[bigZ1, bigC1, bigJ1, merdata1, tmax1,rtot1] = ROSAmain_v1_1(bigz,bigc,J,v0,delta,alpha,beta,lambda,U,tstep,steps,resl,rkswt,pcswt,inswt,imswt,shswt); % main time stepping algorithm - see function.
 bigDataPack = ROSAdcomp_v1_1(bigZ1, bigC1, bigJ1,merdata1,tmax1,rtot1,prdt,shswt); % compile previous data (if applicable) and current data into big data pack - see function.
 %load('bigDataPack_example.mat'); spc = 1; shswt = 21; imswt = 0; % bring in prev data (comment out if needed)
 bigZ = bigDataPack{1}; bigJ = bigDataPack{3}; % extract Z (boundary data) and J (no. of wildfires) values.

@@ -7,8 +7,10 @@ function [resl, bigz, bigc, J] = ROSAshape_v1_1(shswt,prdt)
 %   shswt = shape switch
 %       - circles (0): two circles (06), four fires (065), three circles (08)
 %       alternative three circles (075).
-%       - Hilton 2018 Fig 8 (1)
-%       - load previous Hilton data (2), prev n-fold shape data (21), 
+%       - Hilton 2018 Fig 8 (1).
+%       - firebreaks: three fires and a road (124), wall with gap (122),
+%       lake (125).
+%       - load previous Hilton data (2), prev n-fold shape data (21). 
 %
 %   prdt = previous fire line data: only used for shswt = 2+
 %
@@ -42,6 +44,17 @@ elseif shswt == 075 % variation of three circles
     A{1} = 0.5; B{1} = 0.0; bigc{1} = -1; nsym{1} = 2; % radius and symmetry of fire 1
     A{2} = 0.5; B{2} = 0.0; bigc{2} = 0.5-0.2i; nsym{2} = 2; % radius and symmetry of fire 2
     A{3} = 0.5; B{3} = 0.0; bigc{3} = 3.0+0.3i; nsym{3} = 2; % radius and symmetry of fire 2
+
+elseif shswt == 121 || shswt==122 || shswt==123 % one fire with firebreaks: infinite wall (121), gap (122), semi-inf wall (123)
+    A{1} = 1; B{1} = 0.0; bigc{1} = 0; nsym{1} = 2; % radius and symmetry of fire 1
+
+elseif shswt == 124 % three circles and inf-wall 
+    A{1} = 2; B{1} = 0.0; bigc{1} = -1.25; nsym{1} = 2; % radius and symmetry of fire 1
+    A{2} = 0.5; B{2} = 0.0; bigc{2} = 3+2i; nsym{2} = 2; % radius and symmetry of fire 2
+    A{3} = 0.5; B{3} = 0.0; bigc{3} = 3-2i; nsym{3} = 2; % radius and symmetry of fire 3
+
+elseif shswt == 125 % circle and lake (lake of 0.5 radius, centred at origin)
+    A{1} = 0.5; B{1} = 0.0; bigc{1} = -1.5; nsym{1} = 2; % radius and symmetry of fire 1
 
 elseif shswt~=1 || shswt~=2 || shswt~=21 % default to two circular fires otherwise (ignores Hilton and load prev data cases)
     sepd = 1.25; % initial separation of fires

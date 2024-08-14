@@ -1,5 +1,5 @@
 %% Appendix C: Fire Merger function
-function [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt,J,resl,inswt,imswt)
+function [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt,J,resl,inswt,imswt,shswt)
 % = detects if fire lines are overlapping, merges any that do, smooths and interpolates each fire line.
 % *some setup is needed in listing the fires: it will not detect whether e.g. fires 1 and 3 are overlapping
 %
@@ -7,7 +7,7 @@ function [bigz, bigc, merdata, mcnt, J] = ROSAmerger_v1_1(bigz,bigc,merdata,mcnt
 imcnt = mcnt; % "initial merge counter": variable to assess if fires have merged this step
 for j=1:J-1 % iterate through all fires
     if j<=J-1 % checks that J has not decreased during this loop
-        mergeZ = firemerge(bigz{j}, bigz{j+1},bigz,j,J); % checks if fires j and j+1 are overlapping*
+        mergeZ = firemerge(bigz{j}, bigz{j+1},bigz,j,J,shswt); % checks if fires j and j+1 are overlapping*
         if size(mergeZ,2)==1 % if a merge has happened
             premerge = bigz; % original z data
             bigz{j} = mergeZ{1}; % replace fire line in jth array (centre of merged fire line = centre of jth fire line)
@@ -37,7 +37,7 @@ end
 end
 
 %% Appendix C1: Merge Function
-function mergeZ = firemerge(z1,z2,bigz,j,J)
+function mergeZ = firemerge(z1,z2,bigz,j,J,shswt)
 % = determine if fire lines z1 and z2 overlap and merge them with the
 %   MATLAB "union" function if they do.
 %
@@ -58,7 +58,12 @@ if overlaps(poly1,poly2) % determine if the fire lines overlap
     zmpk = Zsm(pos); % identifies the point with the highest curvature - the "peak point".
     zdis = abs(Zsm-zmpk.*ones(size(Zsm))); % find distance between "peak point" and all other boundary data.
     if J~=2 % if there are three fires, choose beginning point furthest from the other wildfire.
-        z3 = bigz{j+2}; zdis2 = abs(Zsm-z3(1)*ones(size(Zsm)));
+        if shswt == 124
+            z3 = bigz{1}; % in the road example, fires 2 and 3 merge.
+        else
+            z3 = bigz{j+2}; % otherwise, assume fires 1 and 2 merge, leaving fire 3.
+        end
+        zdis2 = abs(Zsm-z3(1)*ones(size(Zsm)));
         zdis = zdis+zdis2; % adds the distance of each boundary point to the other wildfire.
     end
     zdmax = max(zdis); % finds distance of the point furthest from the peak point (plus the other wildfire, if applicable).
